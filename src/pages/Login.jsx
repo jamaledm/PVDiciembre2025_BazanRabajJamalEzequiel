@@ -42,35 +42,40 @@ export default function Login() {
   };
 
   return (
-    // Uso la clase 'auth-container' definida en global.css para dar estilo de tarjeta
-    <div className="auth-container">
-      <h2>Iniciar Sesión</h2>
-      
-      {/* Renderizado condicional: Solo muestra el div de error si 'error' tiene texto */}
-      {error && <div className="error-msg">{error}</div>}
+    <>
+      {/* Título del Hospital Agregado */}
+      <h1 className="hospital-branding">HOSPITAL CURTIDOR</h1>
 
-      {/* AGREGADO: 'noValidate' para que el navegador no saque sus propios avisos */}
-      <form onSubmit={handleLogin} noValidate>
-        <input 
-          className="form-input"
-          type="email" 
-          placeholder="Correo" 
-          // Quitamos 'required' porque ahora validamos arriba
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-        />
-        <input 
-          className="form-input"
-          type="password" 
-          placeholder="Contraseña" 
-          // Quitamos 'required'
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
-        />
-        <button className="btn-primary" type="submit">Ingresar</button>
-      </form>
-      
-      <p>¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link></p>
-    </div>
+      {/* Uso la clase 'auth-container' definida en global.css para dar estilo de tarjeta */}
+      <div className="auth-container">
+        <h2>Iniciar Sesión</h2>
+        
+        {/* Renderizado condicional: Solo muestra el div de error si 'error' tiene texto */}
+        {error && <div className="error-msg">{error}</div>}
+
+        {/* AGREGADO: 'noValidate' para que el navegador no saque sus propios avisos */}
+        <form onSubmit={handleLogin} noValidate>
+          <input 
+            className="form-input"
+            type="email" 
+            placeholder="Correo" 
+            // Quitamos 'required' porque ahora validamos arriba
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+          />
+          <input 
+            className="form-input"
+            type="password" 
+            placeholder="Contraseña" 
+            // Quitamos 'required'
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+          />
+          <button className="btn-primary" type="submit">Ingresar</button>
+        </form>
+        
+        <p>¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link></p>
+      </div>
+    </>
   );
 }

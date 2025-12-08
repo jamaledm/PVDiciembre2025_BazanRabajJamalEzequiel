@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useTurnos } from "../hooks/useTurnos";
 import { useNavigate } from "react-router-dom";
+import jsPDF from "jspdf"; // Importamos la librería para el PDF
 import "../styles/dashboard.css"; // Estilos específicos para el panel
 
 export default function Dashboard() {
-  // Extraigo todo lo necesario del Contexto
-  const { currentUser, logout, users, agendarTurno, turnos, getHorariosOcupados } = useTurnos();
+  // Extraigo todo lo necesario del Contexto (Agregamos cancelarTurno)
+  const { currentUser, logout, users, agendarTurno, turnos, getHorariosOcupados, cancelarTurno } = useTurnos();
   const navigate = useNavigate();
 
   // Estados locales para la interacción del usuario
@@ -36,6 +37,36 @@ export default function Dashboard() {
   const handleLogout = () => {
     logout();
     navigate("/");
+  };
+
+  // Función para generar y descargar el PDF
+  const generarPDF = (datosTurno) => {
+    const doc = new jsPDF();
+    
+    // Encabezado
+    doc.setFontSize(22);
+    doc.setTextColor(0, 86, 179); // Azul Hospital
+    doc.text("HOSPITAL CURTIDOR", 20, 20);
+    
+    // Subtitulo
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Comprobante de Turno Médico", 20, 35);
+    
+    // Datos
+    doc.setFontSize(12);
+    doc.text(`Paciente: ${datosTurno.paciente}`, 20, 50);
+    doc.text(`Médico: ${datosTurno.medico}`, 20, 60);
+    doc.text(`Fecha: ${datosTurno.fecha}`, 20, 70);
+    doc.text(`Hora: ${datosTurno.hora}`, 20, 80);
+    doc.text(`ID Turno: ${datosTurno.id}`, 20, 90);
+    
+    // Pie de página
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text("Por favor, preséntese 10 minutos antes.", 20, 110);
+    
+    doc.save(`Turno_${datosTurno.paciente}_${datosTurno.id}.pdf`);
   };
 
   // Procesar la reserva del turno.
@@ -123,16 +154,60 @@ export default function Dashboard() {
               </button>
             </>
           )}
+
+          {/* Sección para ver y cancelar turnos existentes */}
+          <div style={{ marginTop: "40px", borderTop: "2px solid #eee", paddingTop: "20px" }}>
+            <h3>Mis Turnos Agendados</h3>
+            {turnos.filter(t => t.paciente === currentUser.name).length === 0 ? (
+                <p>No tienes turnos pendientes.</p>
+            ) : (
+                <ul style={{ listStyle: "none", padding: 0 }}>
+                    {turnos.filter(t => t.paciente === currentUser.name).map(t => (
+                        <li key={t.id} style={{ background: "#f9f9f9", margin: "10px 0", padding: "10px", borderRadius: "5px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <span><strong>{t.medico}</strong> - {t.hora}</span>
+                            <div>
+                                {/* Botón Descargar PDF */}
+                                <button 
+                                    onClick={() => generarPDF(t)}
+                                    style={{ marginRight: "10px", background: "#28a745", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
+                                >
+                                    PDF
+                                </button>
+                                {/* Botón Cancelar */}
+                                <button 
+                                    onClick={() => {
+                                        if(window.confirm("¿Seguro que quieres cancelar este turno?")) cancelarTurno(t.id)
+                                    }} 
+                                    style={{ background: "#dc3545", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            )}
+          </div>
         </div>
       )}
 
-      {/* --- VISTA DE CONFIRMACIÓN (Resumen) --- */}
+      {/* --- VISTA DE CONFIRMACIÓN --- */}
       {turnoConfirmado && (
         <div className="confirm-card">
           <h2 style={{color: 'green'}}>¡Turno Exitoso!</h2>
           <p><strong>Médico:</strong> {turnoConfirmado.medico}</p>
           <p><strong>Fecha:</strong> {turnoConfirmado.fecha}</p>
           <p><strong>Hora:</strong> {turnoConfirmado.hora}</p>
+          
+          {/* Botón para imprimir PDF desde la confirmación */}
+          <button 
+            className="btn-primary" 
+            style={{ marginBottom: "10px", background: "#28a745" }}
+            onClick={() => generarPDF(turnoConfirmado)}
+          >
+            Descargar Comprobante (PDF)
+          </button>
+
           <button className="btn-primary" onClick={() => setTurnoConfirmado(null)}>
             Volver al inicio
           </button>
@@ -160,6 +235,16 @@ export default function Dashboard() {
              )}
         </div>
       )}
+
+      {/* Botón Flotante de WhatsApp */}
+      <a 
+        href="https://wa.me/543884600177" 
+        className="whatsapp-float" 
+        target="_blank" 
+        rel="noopener noreferrer"
+      >
+        📞
+      </a>
     </div>
   );
 }
