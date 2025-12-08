@@ -18,6 +18,18 @@ export default function Login() {
     e.preventDefault();
     setError(null); 
 
+    // Validar si los campos están vacíos
+    if (!email || !password) {
+        setError("⚠️ Por favor, completa todos los campos.");
+        return; // Detiene la función aquí si hay error
+    }
+
+    // 2. Validar el formato del email (el famoso @)
+    if (!email.includes("@")) {
+        setError("⚠️ El correo debe contener un '@'.");
+        return; 
+    }
+
     const res = loginUser(email, password);
     
     // Si la respuesta es exitosa (success: true), redirige al Dashboard.
@@ -37,12 +49,13 @@ export default function Login() {
       {/* Renderizado condicional: Solo muestra el div de error si 'error' tiene texto */}
       {error && <div className="error-msg">{error}</div>}
 
-      <form onSubmit={handleLogin}>
+      {/* AGREGADO: 'noValidate' para que el navegador no saque sus propios avisos */}
+      <form onSubmit={handleLogin} noValidate>
         <input 
           className="form-input"
           type="email" 
           placeholder="Correo" 
-          required 
+          // Quitamos 'required' porque ahora validamos arriba
           value={email} 
           onChange={(e) => setEmail(e.target.value)} 
         />
@@ -50,7 +63,7 @@ export default function Login() {
           className="form-input"
           type="password" 
           placeholder="Contraseña" 
-          required 
+          // Quitamos 'required'
           value={password} 
           onChange={(e) => setPassword(e.target.value)} 
         />
