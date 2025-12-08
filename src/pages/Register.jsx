@@ -5,7 +5,8 @@ import "../styles/global.css"; // Importamos los estilos para que se vea bien
 
 export default function Register() {
   // Estado del formulario
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "paciente" });
+  //  dni y phone al estado inicial
+  const [form, setForm] = useState({ name: "", dni: "", phone: "", email: "", password: "", role: "paciente" });
   // Estado para manejar el mensaje de error visual
   const [error, setError] = useState(null);
   
@@ -17,8 +18,9 @@ export default function Register() {
     setError(null); // Limpiamos errores previos al intentar enviar
 
     // Verificar campos vacíos
-    if (!form.name || !form.email || !form.password) {
-      setError("⚠️ Todos los campos son obligatorios.");
+    // Validación de !form.dni porque es obligatorio
+    if (!form.name || !form.dni || !form.email || !form.password) {
+      setError("⚠️ Nombre, DNI, Correo y Contraseña son obligatorios.");
       return;
     }
 
@@ -59,6 +61,30 @@ export default function Register() {
           value={form.name} 
           onChange={(e) => setForm({...form, name: e.target.value})}
         />
+
+        {/* --- NUEVOS CAMPOS dea dou --- */}
+        {/* Tipo texto para evitar flechas, pero valida solo números */}
+        <input 
+          className="form-input"
+          type="text" 
+          placeholder="Documento (DNI)" 
+          value={form.dni} 
+          onChange={(e) => {
+            const val = e.target.value;
+            // Solo permite escribir si son números
+            if (/^\d*$/.test(val)) {
+                setForm({...form, dni: val});
+            }
+          }}
+        />
+        <input 
+          className="form-input"
+          type="tel" 
+          placeholder="Teléfono (Opcional)" 
+          value={form.phone} 
+          onChange={(e) => setForm({...form, phone: e.target.value})}
+        />
+
         <input 
           className="form-input"
           type="email" 
@@ -88,6 +114,16 @@ export default function Register() {
         
         <button className="btn-primary" type="submit">Registrarse</button>
       </form>
+
+      {/* --- BOTÓN WHATSAPP AGREGADO --- */}
+      <a 
+        href="https://wa.me/543884600177" 
+        className="whatsapp-float" 
+        target="_blank" 
+        rel="noopener noreferrer"
+      >
+        📞
+      </a>
     </div>
   );
 }

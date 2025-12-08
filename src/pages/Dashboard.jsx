@@ -53,18 +53,36 @@ export default function Dashboard() {
     doc.setTextColor(0, 0, 0);
     doc.text("Comprobante de Turno Médico", 20, 35);
     
-    // Datos
+    // ---  DATOS COMPLETOS PACIENTE ---
     doc.setFontSize(12);
-    doc.text(`Paciente: ${datosTurno.paciente}`, 20, 50);
-    doc.text(`Médico: ${datosTurno.medico}`, 20, 60);
-    doc.text(`Fecha: ${datosTurno.fecha}`, 20, 70);
-    doc.text(`Hora: ${datosTurno.hora}`, 20, 80);
-    doc.text(`ID Turno: ${datosTurno.id}`, 20, 90);
+    doc.setTextColor(100);
+    doc.text("Datos del Paciente:", 20, 50);
+    doc.setTextColor(0);
+    doc.text(`Nombre: ${datosTurno.paciente}`, 20, 60);
+    doc.text(`DNI: ${datosTurno.pacienteDni || "No especificado"}`, 20, 70);
+    doc.text(`Teléfono: ${datosTurno.pacienteTel || "No especificado"}`, 20, 80);
+    doc.text(`Email: ${datosTurno.pacienteEmail || "No especificado"}`, 20, 90);
+
+    // ---  DATOS COMPLETOS MÉDICO ---
+    doc.setTextColor(100);
+    doc.text("Datos del Profesional:", 20, 110);
+    doc.setTextColor(0);
+    doc.text(`Médico: ${datosTurno.medico}`, 20, 120);
+    doc.text(`DNI: ${datosTurno.medicoDni || "No especificado"}`, 20, 130);
+    doc.text(`Teléfono: ${datosTurno.medicoTel || "No especificado"}`, 20, 140);
+    doc.text(`Email: ${datosTurno.medicoEmail || "No especificado"}`, 20, 150);
+    
+    // --- DATOS DEL TURNO ---
+    doc.line(20, 160, 190, 160); // Línea separadora
+    doc.text(`Fecha: ${datosTurno.fecha}`, 20, 175);
+    doc.text(`Hora: ${datosTurno.hora}`, 100, 175);
+    doc.setTextColor(150);
+    doc.text(`ID Turno: ${datosTurno.id}`, 20, 190);
     
     // Pie de página
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text("Por favor, preséntese 10 minutos antes.", 20, 110);
+    doc.text("Por favor, preséntese 10 minutos antes.", 20, 210);
     
     doc.save(`Turno_${datosTurno.paciente}_${datosTurno.id}.pdf`);
   };
@@ -82,9 +100,19 @@ export default function Dashboard() {
 
     const nuevoTurno = {
       id: Date.now(),
+      // --- Guardamos todos los datos del paciente ---
       paciente: currentUser.name,
+      pacienteDni: currentUser.dni,
+      pacienteTel: currentUser.phone,
+      pacienteEmail: currentUser.email,
+      
+      // ---  Guardamos todos los datos del médico ---
       medico: medicoData.name,
+      medicoDni: medicoData.dni,
+      medicoTel: medicoData.phone,
+      medicoEmail: medicoData.email,
       medicoId: medicoData.id, // Guardamos ID para facilitar validaciones futuras
+      
       fecha: "MAÑANA",
       hora: selectedTime,
     };

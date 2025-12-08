@@ -32,6 +32,7 @@
   display: flex;
   gap: 10px;
   margin: 15px 0;
+  flex-wrap: wrap; /* Para que no se rompa en celulares */
 }
 
 .time-btn {
@@ -45,7 +46,8 @@
 
 .time-btn.selected {
   background-color: #007bff;
-  color: rgb(0, 0, 0);
+  /* Letra blanca para que se lea sobre el azul */
+  color: white; 
   border-color: #007bff;
 }
 
