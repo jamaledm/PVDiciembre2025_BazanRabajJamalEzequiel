@@ -40,6 +40,7 @@
   background: #f8f9fa;
   cursor: pointer;
   border-radius: 4px;
+  color: #000000;
 }
 
 .time-btn.selected {
