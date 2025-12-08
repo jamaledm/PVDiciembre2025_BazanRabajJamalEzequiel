@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTurnos } from "../hooks/useTurnos";
 import { useNavigate } from "react-router-dom";
 import "../styles/dashboard.css"; // Estilos específicos para el panel
+import "../styles/global.css";    // Importa global para asegurarnos de tener clases base
 
 export default function Dashboard() {
   // Extraigo todo lo necesario del Contexto
@@ -22,8 +23,6 @@ export default function Dashboard() {
   const horarios = ["09:00", "10:00", "11:00", "12:00", "13:00"]; // Horarios fijos
 
   // Actualizar disponibilidad cuando se elige médico.
-  // useEffect escucha cambios en 'selectedDoctorId'. Si cambia, llama a getHorariosOcupados
-  // y actualiza el estado 'horasOcupadas'. También resetea la hora seleccionada anteriormente.
   useEffect(() => {
     if (selectedDoctorId) {
       const ocupadas = getHorariosOcupados(parseInt(selectedDoctorId));
@@ -31,7 +30,7 @@ export default function Dashboard() {
       setSelectedTime(""); 
       setError(null);
     }
-  }, [selectedDoctorId, turnos]); // Se ejecuta si cambia el médico O si alguien toma un turno nuevo
+  }, [selectedDoctorId, turnos]); 
 
   const handleLogout = () => {
     logout();
@@ -53,7 +52,7 @@ export default function Dashboard() {
       id: Date.now(),
       paciente: currentUser.name,
       medico: medicoData.name,
-      medicoId: medicoData.id, // Guardamos ID para facilitar validaciones futuras
+      medicoId: medicoData.id, 
       fecha: "MAÑANA",
       hora: selectedTime,
     };
@@ -62,11 +61,10 @@ export default function Dashboard() {
     const res = agendarTurno(nuevoTurno);
 
     if (res.success) {
-      setTurnoConfirmado(nuevoTurno); // Mostramos tarjeta de éxito
+      setTurnoConfirmado(nuevoTurno); 
       setError(null);
     } else {
-      setError(res.message); // Mostrar error si alguien ganó el turno
-      // Recargamos las horas ocupadas por si acaso
+      setError(res.message); 
       setHorasOcupadas(getHorariosOcupados(parseInt(selectedDoctorId)));
     }
   };
@@ -86,43 +84,51 @@ export default function Dashboard() {
         <div>
           <h3>Solicitar Turno</h3>
           
-          <label>Selecciona Profesional:</label>
+          <label style={{ display: "block", marginBottom: "5px" }}>Selecciona Profesional:</label>
           <select 
             className="form-input" 
+            value={selectedDoctorId} // Vinculamos el value al estado
             onChange={(e) => setSelectedDoctorId(e.target.value)}
           >
             <option value="">-- Seleccionar --</option>
             {medicos.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
           </select>
 
-          {/* Solo muetra los horarios si ya eligió médico */}
-          {selectedDoctorId && (
-            <>
-              <p>Horarios Disponibles para mañana:</p>
-              <div className="time-grid">
-                {horarios.map((hora) => {
-                  // Verifico si esta hora específica está en el array de ocupadas
-                  const isTaken = horasOcupadas.includes(hora); 
-                  
-                  return (
-                    <button 
-                      key={hora} 
-                      disabled={isTaken} // Deshabilita el click HTML
-                      onClick={() => !isTaken && setSelectedTime(hora)}
-                      // Si está ocupado añade 'disabled', si está seleccionado añade 'selected'
-                      className={`time-btn ${selectedTime === hora ? 'selected' : ''} ${isTaken ? 'disabled' : ''}`}
-                    >
-                      {hora} {isTaken ? '(Ocupado)' : ''}
-                    </button>
-                  )
-                })}
-              </div>
+          {/* --- CAMBIO: Siempre mostramos el contenedor, cambiamos el contenido según selección --- */}
+          <div style={{ marginTop: "20px" }}>
+            <p>Horarios Disponibles para mañana:</p>
 
-              <button className="btn-primary" onClick={handleAgendar} style={{marginTop: '20px'}}>
-                Confirmar Reserva
-              </button>
-            </>
-          )}
+            {!selectedDoctorId ? (
+               // OPCIÓN A: No hay médico seleccionado -> Mostramos mensaje placeholder
+               <p style={{ color: "#888", fontStyle: "italic", padding: "10px", border: "1px dashed #ccc", borderRadius: "5px" }}>
+                 👈 Por favor, selecciona un profesional arriba para ver su disponibilidad.
+               </p>
+            ) : (
+               // OPCIÓN B: Hay médico -> Mostramos los botones
+               <>
+                  <div className="time-grid">
+                    {horarios.map((hora) => {
+                      const isTaken = horasOcupadas.includes(hora); 
+                      
+                      return (
+                        <button 
+                          key={hora} 
+                          disabled={isTaken} 
+                          onClick={() => !isTaken && setSelectedTime(hora)}
+                          className={`time-btn ${selectedTime === hora ? 'selected' : ''} ${isTaken ? 'disabled' : ''}`}
+                        >
+                          {hora} {isTaken ? '(Ocupado)' : ''}
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  <button className="btn-primary" onClick={handleAgendar} style={{marginTop: '20px'}}>
+                    Confirmar Reserva
+                  </button>
+               </>
+            )}
+          </div>
         </div>
       )}
 
@@ -147,7 +153,6 @@ export default function Dashboard() {
                <p>No tienes pacientes agendados aún.</p>
              ) : (
                <ul>
-                 {/* Filtramos los turnos globales para ver solo los de este médico */}
                  {turnos
                    .filter(t => t.medicoId === currentUser.id)
                    .map(t => (
