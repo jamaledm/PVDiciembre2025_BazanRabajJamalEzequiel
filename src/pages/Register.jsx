@@ -1,54 +1,92 @@
 import { useState } from "react";
 import { useTurnos } from "../hooks/useTurnos";
 import { useNavigate } from "react-router-dom";
+import "../styles/global.css"; // Importamos los estilos para que se vea bien
 
 export default function Register() {
+  // Estado del formulario
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "paciente" });
+  // Estado para manejar el mensaje de error visual
+  const [error, setError] = useState(null);
+  
   const { registerUser } = useTurnos();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(null); // Limpiamos errores previos al intentar enviar
+
+    // Verificar campos vacíos
+    if (!form.name || !form.email || !form.password) {
+      setError("⚠️ Todos los campos son obligatorios.");
+      return;
+    }
+
+    // Verificar formato de email
+    if (!form.email.includes("@")) {
+      setError("⚠️ El correo debe incluir un '@'.");
+      return;
+    }
+
     // Guardo el usuario con un ID único
     const newUser = { ...form, id: Date.now() };
     const res = registerUser(newUser);
     
     if (res.success) {
-      alert("Registro exitoso. Ahora inicia sesión.");
+      // Mensaje de éxito (aquí el alert está bien para confirmar antes de cambiar de pag)
+      alert("¡Registro exitoso! Ahora inicia sesión.");
       navigate("/");
     } else {
-      alert(res.message);
+      // Si falla (ej: correo repetido), mostramos la caja roja
+      setError(res.message);
     }
   };
 
   return (
-    <div style={{ padding: "20px", border: "1px solid #ccc", maxWidth: "400px", margin: "auto" }}>
+    // Usamos la clase 'auth-container' para el diseño de tarjeta blanca
+    <div className="auth-container">
       <h2>Registro</h2>
-      <form onSubmit={handleSubmit}>
+
+      {/* Caja de error visual si existe un mensaje */}
+      {error && <div className="error-msg">{error}</div>}
+
+      {/* 'noValidate' desactiva los mensajes grises del navegador */}
+      <form onSubmit={handleSubmit} noValidate>
         <input 
-          type="text" placeholder="Nombre Completo" required 
-          value={form.name} onChange={(e) => setForm({...form, name: e.target.value})}
-          style={{ display: "block", width: "100%", marginBottom: "10px" }}
+          className="form-input"
+          type="text" 
+          placeholder="Nombre Completo" 
+          value={form.name} 
+          onChange={(e) => setForm({...form, name: e.target.value})}
         />
         <input 
-          type="email" placeholder="Correo" required 
-          value={form.email} onChange={(e) => setForm({...form, email: e.target.value})}
-          style={{ display: "block", width: "100%", marginBottom: "10px" }}
+          className="form-input"
+          type="email" 
+          placeholder="Correo" 
+          value={form.email} 
+          onChange={(e) => setForm({...form, email: e.target.value})}
         />
         <input 
-          type="password" placeholder="Contraseña" required 
-          value={form.password} onChange={(e) => setForm({...form, password: e.target.value})}
-          style={{ display: "block", width: "100%", marginBottom: "10px" }}
+          className="form-input"
+          type="password" 
+          placeholder="Contraseña" 
+          value={form.password} 
+          onChange={(e) => setForm({...form, password: e.target.value})}
         />
-        <label>Tipo de Usuario:</label>
+        
+        <label style={{ display: "block", textAlign: "left", margin: "10px 0" }}>
+          Tipo de Usuario:
+        </label>
         <select 
-          value={form.role} onChange={(e) => setForm({...form, role: e.target.value})}
-          style={{ display: "block", width: "100%", marginBottom: "10px" }}
+          className="form-input"
+          value={form.role} 
+          onChange={(e) => setForm({...form, role: e.target.value})}
         >
           <option value="paciente">Paciente</option>
           <option value="medico">Médico</option>
         </select>
-        <button type="submit">Registrarse</button>
+        
+        <button className="btn-primary" type="submit">Registrarse</button>
       </form>
     </div>
   );
