@@ -27,6 +27,14 @@ body {
   margin: 10px 0;
   border: 1px solid #ddd;
   border-radius: 5px;
+  background-color: #ffffff;
+  color: #000000;
+  font-size: 16px;
+}
+.form-input:focus {
+  outline: none;
+  border-color: #007bff;     /* Borde azul al hacer click */
+  background-color: #f0f8ff; /* Fondo ligeramente azulado */
 }
 
 /* Botones */
