@@ -76,6 +76,16 @@ export default function Login() {
         
         <p>¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link></p>
       </div>
+
+      {/* Botón Flotante de WhatsApp --- */}
+      <a 
+        href="https://wa.me/543884600177" 
+        className="whatsapp-float" 
+        target="_blank" 
+        rel="noopener noreferrer"
+      >
+        📞
+      </a>
     </>
   );
 }

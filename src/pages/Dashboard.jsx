@@ -53,7 +53,7 @@ export default function Dashboard() {
     doc.setTextColor(0, 0, 0);
     doc.text("Comprobante de Turno Médico", 20, 35);
     
-    // ---  DATOS COMPLETOS PACIENTE ---
+    // --- DATOS COMPLETOS PACIENTE ---
     doc.setFontSize(12);
     doc.setTextColor(100);
     doc.text("Datos del Paciente:", 20, 50);
@@ -63,7 +63,7 @@ export default function Dashboard() {
     doc.text(`Teléfono: ${datosTurno.pacienteTel || "No especificado"}`, 20, 80);
     doc.text(`Email: ${datosTurno.pacienteEmail || "No especificado"}`, 20, 90);
 
-    // ---  DATOS COMPLETOS MÉDICO ---
+    // --- DATOS COMPLETOS MÉDICO ---
     doc.setTextColor(100);
     doc.text("Datos del Profesional:", 20, 110);
     doc.setTextColor(0);
@@ -73,6 +73,7 @@ export default function Dashboard() {
     doc.text(`Email: ${datosTurno.medicoEmail || "No especificado"}`, 20, 150);
     
     // --- DATOS DEL TURNO ---
+    doc.setDrawColor(0);
     doc.line(20, 160, 190, 160); // Línea separadora
     doc.text(`Fecha: ${datosTurno.fecha}`, 20, 175);
     doc.text(`Hora: ${datosTurno.hora}`, 100, 175);
@@ -106,7 +107,7 @@ export default function Dashboard() {
       pacienteTel: currentUser.phone,
       pacienteEmail: currentUser.email,
       
-      // ---  Guardamos todos los datos del médico ---
+      // --- Guardamos todos los datos del médico ---
       medico: medicoData.name,
       medicoDni: medicoData.dni,
       medicoTel: medicoData.phone,
@@ -134,7 +135,8 @@ export default function Dashboard() {
     <div className="dashboard-container">
       <header className="header">
         <h1>Hola, {currentUser?.name}</h1>
-        <button className="logout-btn" onClick={handleLogout}>Salir</button>
+        {/* Flecha en el botón de salir */}
+        <button className="logout-btn" onClick={handleLogout}>&#8592; Salir</button>
       </header>
 
       {/* Mensaje de error general si ocurre alguno */}

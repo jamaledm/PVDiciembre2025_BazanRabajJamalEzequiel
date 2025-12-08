@@ -46,7 +46,29 @@ export default function Register() {
 
   return (
     // Usamos la clase 'auth-container' para el diseño de tarjeta blanca
-    <div className="auth-container">
+    //  style position relative para ubicar la flecha
+    <div className="auth-container" style={{ position: "relative" }}>
+      
+      {/*Flecha para volver al Login --- */}
+      <button 
+        onClick={() => navigate("/")}
+        style={{
+            position: "absolute",
+            top: "20px",
+            left: "20px",
+            background: "transparent",
+            border: "none",
+            fontSize: "1.5rem",
+            cursor: "pointer",
+            color: "#007bff",
+            fontWeight: "bold",
+            lineHeight: "1"
+        }}
+        title="Volver al inicio"
+      >
+        &#8592;
+      </button>
+
       <h2>Registro</h2>
 
       {/* Caja de error visual si existe un mensaje */}
