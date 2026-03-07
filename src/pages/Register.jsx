@@ -104,7 +104,13 @@ export default function Register() {
           type="tel" 
           placeholder="Teléfono (Opcional)" 
           value={form.phone} 
-          onChange={(e) => setForm({...form, phone: e.target.value})}
+          onChange={(e) => {
+            const val = e.target.value;
+            // Solo permite números
+            if (/^\d*$/.test(val)) {
+              setForm({...form, phone: val});
+            }
+          }}
         />
 
         <input 
