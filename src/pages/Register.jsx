@@ -81,7 +81,13 @@ export default function Register() {
           type="text" 
           placeholder="Nombre Completo" 
           value={form.name} 
-          onChange={(e) => setForm({...form, name: e.target.value})}
+          onChange={(e) => {
+            const val = e.target.value;
+            // Solo permite letras, espacios y caracteres acentuados (sin números)
+            if (/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(val)) {
+                setForm({...form, name: val});
+            }
+          }}
         />
 
         {/* --- NUEVOS CAMPOS dea dou --- */}
