@@ -16,6 +16,7 @@ export default function Dashboard() {
   
   // feedback de turno agendado
   const [turnoConfirmado, setTurnoConfirmado] = useState(null);
+  const [turnoCancelado, setTurnoCancelado] = useState(null);  // Estado para turno cancelado
   const [error, setError] = useState(null);
 
   // Filtramos usuarios para obtener solo los médicos y mostrar en el select
@@ -37,6 +38,16 @@ export default function Dashboard() {
   const handleLogout = () => {
     logout();
     navigate("/");
+  };
+
+  // Función para cancelar turno con confirmación personalizada
+  const handleCancelTurno = (turnoId, nombreMedico, hora) => {
+    if (window.confirm("¿Seguro que quieres cancelar este turno?")) {
+      cancelarTurno(turnoId);
+      setTurnoCancelado({ medico: nombreMedico, hora: hora });  // Guardar datos del turno cancelado
+      // Limpiar el mensaje después de 3 segundos
+      setTimeout(() => setTurnoCancelado(null), 3000);
+    }
   };
 
   // Función para generar y descargar el PDF
@@ -142,6 +153,25 @@ export default function Dashboard() {
       {/* Mensaje de error general si ocurre alguno */}
       {error && <div className="error-msg">{error}</div>}
 
+      {/* Mensaje flotante de cancelación exitosa */}
+      {turnoCancelado && (
+        <div style={{
+          position: "fixed",
+          top: "20px",
+          right: "20px",
+          background: "#fff3cd",
+          border: "1px solid #ffc107",
+          color: "#856404",
+          padding: "15px",
+          borderRadius: "5px",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          zIndex: "1000"
+        }}>
+          <strong>✓ Turno Cancelado</strong><br />
+          Has cancelado el turno con {turnoCancelado.medico} a las {turnoCancelado.hora}
+        </div>
+      )}
+
       {/* --- VISTA PARA PACIENTES --- */}
       {currentUser?.role === "paciente" && !turnoConfirmado && (
         <div>
@@ -205,9 +235,7 @@ export default function Dashboard() {
                                 </button>
                                 {/* Botón Cancelar */}
                                 <button 
-                                    onClick={() => {
-                                        if(window.confirm("¿Seguro que quieres cancelar este turno?")) cancelarTurno(t.id)
-                                    }} 
+                                    onClick={() => handleCancelTurno(t.id, t.medico, t.hora)}
                                     style={{ background: "#dc3545", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
                                 >
                                     Cancelar
