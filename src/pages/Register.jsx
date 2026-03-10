@@ -38,10 +38,10 @@ export default function Register() {
     if (res.success) {
       // Mostrar mensaje de éxito en la página en lugar de alert
       setSuccess(`¡Registro exitoso, ${form.name}! Ahora inicia sesión.`);
-      // limpiar formulario solo para buena forma (opcional)
+      // limpiar formulario solo para buena forma
       setForm({ name: "", dni: "", phone: "", email: "", password: "", role: "paciente" });
       // redirigir después de un breve retraso
-      setTimeout(() => navigate("/"), 2000);
+      setTimeout(() => navigate("/"), 3000);
     } else {
       // Si falla (ej: correo repetido), mostramos la caja roja
       setError(res.message);
