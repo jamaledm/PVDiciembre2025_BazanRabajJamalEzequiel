@@ -18,6 +18,8 @@ export default function Dashboard() {
   const [turnoConfirmado, setTurnoConfirmado] = useState(null);
   const [turnoCancelado, setTurnoCancelado] = useState(null);  // Estado para turno cancelado
   const [error, setError] = useState(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);  // Modal de confirmación
+  const [turnoAborrar, setTurnoAborrar] = useState(null);  // Datos del turno a cancelar
 
   // Filtramos usuarios para obtener solo los médicos y mostrar en el select
   const medicos = users.filter((u) => u.role === "medico");
@@ -42,12 +44,25 @@ export default function Dashboard() {
 
   // Función para cancelar turno con confirmación personalizada
   const handleCancelTurno = (turnoId, nombreMedico, hora) => {
-    if (window.confirm("¿Seguro que quieres cancelar este turno?")) {
-      cancelarTurno(turnoId);
-      setTurnoCancelado({ medico: nombreMedico, hora: hora });  // Guardar datos del turno cancelado
-      // Limpiar el mensaje después de 3 segundos
+    setTurnoAborrar({ id: turnoId, medico: nombreMedico, hora: hora });
+    setShowConfirmDialog(true);  // Mostrar modal
+  };
+
+  // Confirmar la cancelación
+  const confirmCancellation = () => {
+    if (turnoAborrar) {
+      cancelarTurno(turnoAborrar.id);
+      setTurnoCancelado({ medico: turnoAborrar.medico, hora: turnoAborrar.hora });
       setTimeout(() => setTurnoCancelado(null), 3000);
     }
+    setShowConfirmDialog(false);
+    setTurnoAborrar(null);
+  };
+
+  // Cancelar la confirmación (cerrar modal)
+  const cancelConfirmation = () => {
+    setShowConfirmDialog(false);
+    setTurnoAborrar(null);
   };
 
   // Función para generar y descargar el PDF
@@ -152,6 +167,66 @@ export default function Dashboard() {
 
       {/* Mensaje de error general si ocurre alguno */}
       {error && <div className="error-msg">{error}</div>}
+
+      {/* Modal personalizado de confirmación */}
+      {showConfirmDialog && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "rgba(0,0,0,0.5)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: "999"
+        }}>
+          <div style={{
+            background: "white",
+            padding: "30px",
+            borderRadius: "10px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+            maxWidth: "400px",
+            textAlign: "center"
+          }}>
+            <h3 style={{ color: "#333", marginBottom: "10px" }}>Confirmar Cancelación</h3>
+            <p style={{ color: "#666", marginBottom: "20px" }}>
+              ¿Estas seguro de que quieres cancelar el turno con <strong>{turnoAborrar?.medico}</strong> a las <strong>{turnoAborrar?.hora}</strong>?
+            </p>
+            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+              <button
+                onClick={confirmCancellation}
+                style={{
+                  background: "#dc3545",
+                  color: "white",
+                  border: "none",
+                  padding: "10px 20px",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontSize: "1rem"
+                }}
+              >
+                Sí, Cancelar
+              </button>
+              <button
+                onClick={cancelConfirmation}
+                style={{
+                  background: "#6c757d",
+                  color: "white",
+                  border: "none",
+                  padding: "10px 20px",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontSize: "1rem"
+                }}
+              >
+                No, Volver
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mensaje flotante de cancelación exitosa */}
       {turnoCancelado && (
