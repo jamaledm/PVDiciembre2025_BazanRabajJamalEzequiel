@@ -7,8 +7,9 @@ export default function Register() {
   // Estado del formulario
   //  dni y phone al estado inicial
   const [form, setForm] = useState({ name: "", dni: "", phone: "", email: "", password: "", role: "paciente" });
-  // Estado para manejar el mensaje de error visual
-  const [error, setError] = useState(null);
+  // Estados para mensajes visuales
+  const [error, setError] = useState(null);             // mensajes de error
+  const [success, setSuccess] = useState(null);         // mensaje de registro exitoso
   
   const { registerUser } = useTurnos();
   const navigate = useNavigate();
@@ -35,9 +36,12 @@ export default function Register() {
     const res = registerUser(newUser);
     
     if (res.success) {
-      // Mensaje de éxito (aquí el alert está bien para confirmar antes de cambiar de pag)
-      alert("¡Registro exitoso! Ahora inicia sesión.");
-      navigate("/");
+      // Mostrar mensaje de éxito en la página en lugar de alert
+      setSuccess(`¡Registro exitoso, ${form.name}! Ahora inicia sesión.`);
+      // limpiar formulario solo para buena forma (opcional)
+      setForm({ name: "", dni: "", phone: "", email: "", password: "", role: "paciente" });
+      // redirigir después de un breve retraso
+      setTimeout(() => navigate("/"), 2000);
     } else {
       // Si falla (ej: correo repetido), mostramos la caja roja
       setError(res.message);
@@ -71,7 +75,8 @@ export default function Register() {
 
       <h2>Registro</h2>
 
-      {/* Caja de error visual si existe un mensaje */}
+      {/* Mensajes de éxito o error visibles en la tarjeta */}
+      {success && <div className="success-msg">{success}</div>}
       {error && <div className="error-msg">{error}</div>}
 
       {/* 'noValidate' desactiva los mensajes grises del navegador */}

@@ -99,6 +99,20 @@ body {
   justify-content: center;
 }
 
+/* MENSAJES DE ÉXITO */
+.success-msg {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Botón Flotante de WhatsApp */
 .whatsapp-float {
   position: fixed;
